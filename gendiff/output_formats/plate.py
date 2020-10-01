@@ -21,8 +21,8 @@ def find_nonmodified(key, dict1, dict2):
         return '   {0}: {1}\n'.format(key, value1)
 
 
-def find_deleted(key, dict1, dict2):
-    """Find if key from dict1 not in dict2.
+def find_new_or_deleted(key, dict1, dict2):
+    """Find if key from one dict is in second.
 
     Args:
         key: key to look for
@@ -30,25 +30,12 @@ def find_deleted(key, dict1, dict2):
         dict2: some dictionary
 
     Returns:
-        deleted data in str format
-    """
-    if key not in dict2:
-        return ' - {0}: {1}\n'.format(key, dict1.get(key))
-
-
-def find_new(key, dict1, dict2):
-    """Find if key from dict2 not in dict1.
-
-    Args:
-        key: key to look for
-        dict1: some dictionary
-        dict2: some dictionary
-
-    Returns:
-        new data in str format
+        new or deleted data in str format
     """
     if key not in dict1:
         return ' + {0}: {1}\n'.format(key, dict2.get(key))
+    elif key not in dict2:
+        return ' - {0}: {1}\n'.format(key, dict1.get(key))
 
 
 def find_modified(key, dict1, dict2):
@@ -80,14 +67,12 @@ def generate_diff(first_file, second_file):
     """
     file1 = transform_file(first_file)
     file2 = transform_file(second_file)
+    unite_keys = list(file1.keys()) + list(file2.keys())
     list_of_diffs = list(map(
         lambda key: find_nonmodified(key, file1, file2), file1.keys(),
     ))
     list_of_diffs += list(map(
-        lambda key: find_deleted(key, file1, file2), file1.keys(),
-    ))
-    list_of_diffs += list(map(
-        lambda key: find_new(key, file1, file2), file2.keys(),
+        lambda key: find_new_or_deleted(key, file1, file2), unite_keys,
     ))
     list_of_diffs += list(map(
         lambda key: find_modified(key, file1, file2), file1.keys(),
