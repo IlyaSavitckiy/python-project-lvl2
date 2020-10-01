@@ -80,24 +80,19 @@ def generate_diff(first_file, second_file):
     """
     file1 = transform_file(first_file)
     file2 = transform_file(second_file)
+    list_of_diffs = list(map(
+        lambda key: find_nonmodified(key, file1, file2), file1.keys(),
+    ))
+    list_of_diffs += list(map(
+        lambda key: find_deleted(key, file1, file2), file1.keys(),
+    ))
+    list_of_diffs += list(map(
+        lambda key: find_new(key, file1, file2), file2.keys(),
+    ))
+    list_of_diffs += list(map(
+        lambda key: find_modified(key, file1, file2), file1.keys(),
+    ))
     list_of_diffs = list(filter(
-        lambda it: it, map(
-            lambda key: find_nonmodified(key, file1, file2), file1.keys(),
-        ),
-    ))
-    list_of_diffs += list(filter(
-        lambda it: it, map(
-            lambda key: find_deleted(key, file1, file2), file1.keys(),
-        ),
-    ))
-    list_of_diffs += list(filter(
-        lambda it: it, map(
-            lambda key: find_new(key, file1, file2), file2.keys(),
-        ),
-    ))
-    list_of_diffs += list(filter(
-        lambda it: it, map(
-            lambda key: find_modified(key, file1, file2), file1.keys(),
-        ),
+        lambda it: it, list_of_diffs,
     ))
     return ''.join(['{\n'] + list_of_diffs + ['}'])
