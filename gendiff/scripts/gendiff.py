@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Main script to get a diff between 2 files."""
+"""Main script."""
 
 
 import argparse
